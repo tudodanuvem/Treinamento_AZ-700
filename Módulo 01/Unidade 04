@@ -1,0 +1,156 @@
+A prática de criação de rede, via Powershell seguiu os recursos apresentados abaixo.
+
+# Criar o Resource Group # 
+
+$rg = @{
+name = 'ContosoResourceGroup'
+Location = 'eastus'
+}
+New-azresourcegroup @rg    
+
+$rg = 'ContosoResourceGroup'
+
+
+
+# Criar a Vnet CoreServicesVnet #
+
+$vnet1 = @{                  
+Name = 'CoreServicesVnet'
+ResourceGroupName = $rg
+Location = 'eastus'
+AddressPrefix = '10.20.0.0/16'
+}
+$virtualNetwork = new-azvirtualnetwork @vnet1
+
+# Criar o Gateway de Subnet #
+
+$gatewaysubnet = @{
+Name = 'GatewaySubnet'
+VirtualNetwork = $virtualNetwork
+AddressPrefix = '10.20.0.0/27'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @gatewaysubnet
+
+# Criar a Subnet SharedServicesSubnet #
+
+$subnet11 = @{
+Name = 'SharedServicesSubnet'
+VirtualNetwork = $virtualNetwork
+AddressPrefix = '10.20.10.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet11
+
+# Criar a Subnet DatabaseSubnet #
+
+$subnet12 = @{
+Name = 'DatabaseSubnet'
+VirtualNetwork = $virtualNetwork
+AddressPrefix = '10.20.20.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet12
+
+# Criar a Subnet PublicWebServiceSubnet #
+
+$subnet13 = @{
+Name = 'PublicWebServiceSubnet'
+VirtualNetwork = $virtualNetwork
+AddressPrefix = '10.20.30.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet13
+
+# Executar a criação das SubNets #
+
+$virtualNetwork | Set-AzVirtualNetwork
+
+
+
+# Criar a Vnet ManufacturingVnet #
+
+$vnet2 = @{                  
+Name = 'ManufacturingVnet'
+ResourceGroupName = $rg
+Location = 'westeurope'
+AddressPrefix = '10.30.0.0/16'
+}
+$virtualNetwork2 = new-azvirtualnetwork @vnet2
+
+# Criar a Subnet ManufacturingSystemSubnet #
+
+$subnet21 = @{
+Name = 'ManufacturingSystemSubnet'
+VirtualNetwork = $virtualNetwork2
+AddressPrefix = '10.30.10.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet21
+
+
+# Criar a Subnet SensorSubnet1 #
+
+$subnet22 = @{
+Name = 'SensorSubnet1'
+VirtualNetwork = $virtualNetwork2
+AddressPrefix = '10.30.20.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet22
+
+
+# Criar a Subnet SensorSubnet2 #
+
+$subnet23 = @{
+Name = 'SensorSubnet2'
+VirtualNetwork = $virtualNetwork2
+AddressPrefix = '10.30.21.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet23
+
+
+# Criar a Subnet SensorSubnet3 #
+
+$subnet24 = @{
+Name = 'SensorSubnet3'
+VirtualNetwork = $virtualNetwork2
+AddressPrefix = '10.30.22.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet24
+
+# Executar a criação das SubNets #
+
+$virtualNetwork2 | Set-AzVirtualNetwork
+
+
+
+# Criar a Vnet ResearchVnet #
+
+$vnet3 = @{                  
+Name = 'ResearchVnet'
+ResourceGroupName = $rg
+Location = 'southeastasia'
+AddressPrefix = '10.40.0.0/16'
+}
+$virtualNetwork3 = new-azvirtualnetwork @vnet3
+
+# Criar a Subnet ResearchSystemSubnet #
+
+$subnet31 = @{
+Name = 'ResearchSystemSubnet'
+VirtualNetwork = $virtualNetwork3
+AddressPrefix = '10.40.0.0/24'
+}
+$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet31
+
+# Executar a criação das SubNets #
+
+$virtualNetwork3 | Set-AzVirtualNetwork
+
+
+
+
+
+# Este comando apaga todos os recursos e grupos de recursos criados na conta #
+####################### Cuidado!!! #######################
+####################### Cuidado!!! #######################
+####################### Cuidado!!! #######################
+####################### Cuidado!!! #######################
+####################### Cuidado!!! #######################
+
+get-azresourcegroup | remove-azresourcegroup -force
