@@ -1,147 +1,147 @@
-A prática de criação de rede, via Powershell seguiu os recursos apresentados abaixo.
-
-# Criar o Resource Group # 
+# Criar o resource group #
 
 $rg = @{
-name = 'ContosoResourceGroup'
-Location = 'eastus'
+name = 'az-700-CS'
+location = 'eastus'
 }
-New-azresourcegroup @rg    
+new-azresourcegroup @rg
 
-$rg = 'ContosoResourceGroup'
+$rg = 'az-700-CS'
 
 
 
-# Criar a Vnet CoreServicesVnet #
 
-$vnet1 = @{                  
-Name = 'CoreServicesVnet'
+
+
+## Criar a Vnet do East Us ##
+
+$vnet1 = @{
+name = 'CoreServicesVnetCS'
 ResourceGroupName = $rg
-Location = 'eastus'
-AddressPrefix = '10.20.0.0/16'
+location = 'eastus'
+addressPrefix = '10.120.0.0/16'
 }
-$virtualNetwork = new-azvirtualnetwork @vnet1
+$virtualnetwork = new-azvirtualnetwork @vnet1
 
-# Criar o Gateway de Subnet #
 
-$gatewaysubnet = @{
-Name = 'GatewaySubnet'
-VirtualNetwork = $virtualNetwork
-AddressPrefix = '10.20.0.0/27'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @gatewaysubnet
+        # Criar a Subnet SharedServicesSubnetCS
 
-# Criar a Subnet SharedServicesSubnet #
+        $subnet11 = @{
+        name = 'SharedServicesSubnetCS'
+        virtualnetwork = $virtualnetwork
+        addressprefix = '10.120.10.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet11
 
-$subnet11 = @{
-Name = 'SharedServicesSubnet'
-VirtualNetwork = $virtualNetwork
-AddressPrefix = '10.20.10.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet11
+        $virtualnetwork | set-azvirtualnetwork
 
-# Criar a Subnet DatabaseSubnet #
+        # Criar duas subnets de uma única vez #
+        $subnet12 = @{
+        name = 'DatabaseSubnetCS'
+        virtualnetwork = $virtualnetwork
+        addressprefix = '10.120.20.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet12
 
-$subnet12 = @{
-Name = 'DatabaseSubnet'
-VirtualNetwork = $virtualNetwork
-AddressPrefix = '10.20.20.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet12
 
-# Criar a Subnet PublicWebServiceSubnet #
+        $subnet13 = @{
+        name = 'PublicWebServiceSubnetCS'
+        virtualnetwork = $virtualnetwork
+        addressprefix = '10.120.30.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet13
 
-$subnet13 = @{
-Name = 'PublicWebServiceSubnet'
-VirtualNetwork = $virtualNetwork
-AddressPrefix = '10.20.30.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet13
 
-# Executar a criação das SubNets #
+        $virtualnetwork | set-azvirtualnetwork
 
-$virtualNetwork | Set-AzVirtualNetwork
+        $subnet14 = @{
+        name = 'gatewaysubnet'
+        virtualnetwork = $virtualnetwork
+        addressprefix = '10.120.0.0/27'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
 
 
 
-# Criar a Vnet ManufacturingVnet #
+##################################
 
-$vnet2 = @{                  
-Name = 'ManufacturingVnet'
+
+
+# Criar a Vnet da Ásia #
+
+$vnet2 = @{
+name = 'ResearchSystemSubnetCS'
 ResourceGroupName = $rg
-Location = 'westeurope'
-AddressPrefix = '10.30.0.0/16'
+location = 'southeastasia'
+addressPrefix = '10.140.0.0/16'
 }
-$virtualNetwork2 = new-azvirtualnetwork @vnet2
-
-# Criar a Subnet ManufacturingSystemSubnet #
-
-$subnet21 = @{
-Name = 'ManufacturingSystemSubnet'
-VirtualNetwork = $virtualNetwork2
-AddressPrefix = '10.30.10.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet21
+$virtualnetwork2 = new-azvirtualnetwork @vnet2
 
 
-# Criar a Subnet SensorSubnet1 #
+        # Criar a subnet da Ásia #
 
-$subnet22 = @{
-Name = 'SensorSubnet1'
-VirtualNetwork = $virtualNetwork2
-AddressPrefix = '10.30.20.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet22
-
-
-# Criar a Subnet SensorSubnet2 #
-
-$subnet23 = @{
-Name = 'SensorSubnet2'
-VirtualNetwork = $virtualNetwork2
-AddressPrefix = '10.30.21.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet23
+        $subnet21 = @{
+        name = 'ResearchSysemSubnetCS'
+        virtualnetwork = $virtualnetwork2
+        addressprefix = '10.140.0.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet21
 
 
-# Criar a Subnet SensorSubnet3 #
-
-$subnet24 = @{
-Name = 'SensorSubnet3'
-VirtualNetwork = $virtualNetwork2
-AddressPrefix = '10.30.22.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet24
-
-# Executar a criação das SubNets #
-
-$virtualNetwork2 | Set-AzVirtualNetwork
+        $virtualnetwork2 | set-azvirtualnetwork
 
 
 
-# Criar a Vnet ResearchVnet #
 
-$vnet3 = @{                  
-Name = 'ResearchVnet'
+##################################
+
+
+
+# Criar a Vnet da Europa #
+
+$vnet3 = @{
+name = 'ManufacturingVnetCS'
 ResourceGroupName = $rg
-Location = 'southeastasia'
-AddressPrefix = '10.40.0.0/16'
+location = 'westeurope'
+addressPrefix = '10.130.0.0/16'
 }
-$virtualNetwork3 = new-azvirtualnetwork @vnet3
+$virtualnetwork3 = new-azvirtualnetwork @vnet3
 
-# Criar a Subnet ResearchSystemSubnet #
+        # Criar a subnet da Europa #
 
-$subnet31 = @{
-Name = 'ResearchSystemSubnet'
-VirtualNetwork = $virtualNetwork3
-AddressPrefix = '10.40.0.0/24'
-}
-$subnetConfig = Add-AzVirtualNetworkSubnetConfig @subnet31
+        $subnet31 = @{
+        name = 'ManufacturingSystemSubnetCS'
+        virtualnetwork = $virtualnetwork3
+        addressprefix = '10.130.10.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet31
 
-# Executar a criação das SubNets #
 
-$virtualNetwork3 | Set-AzVirtualNetwork
+        $subnet31 = @{
+        name = 'Sensorsubnet1CS'
+        virtualnetwork = $virtualnetwork3
+        addressprefix = '10.130.20.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet31
 
+
+        $subnet31 = @{
+        name = 'Sensorsubnet2CS'
+        virtualnetwork = $virtualnetwork3
+        addressprefix = '10.130.21.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet31
+
+
+        $subnet31 = @{
+        name = 'Sensorsubnet3CS'
+        virtualnetwork = $virtualnetwork3
+        addressprefix = '10.130.22.0/24'
+        }
+        $subnetconfig = add-azvirtualnetworksubnetconfig @subnet31
+
+
+        $virtualnetwork3 | set-azvirtualnetwork
 
 
 
