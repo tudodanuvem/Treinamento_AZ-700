@@ -1,0 +1,73 @@
+# Criar o resource group #
+
+$rg = @{
+name = 'ContosoResourceGroup'
+location = 'eastus'
+}
+new-azresourcegroup @rg
+
+$rgname = 'ContosoResourceGroup'
+$rg = 'ContosoResourceGroup'
+
+
+
+
+## Criar a Vnet do East Us ##
+
+$vnet1 = @{
+name = 'CoreServicesVnet'
+ResourceGroupName = $rg
+location = 'eastus'
+addressPrefix = '10.20.0.0/16'
+}
+$virtualnetwork = new-azvirtualnetwork @vnet1
+
+
+
+
+# Criar a Subnet SharedServicesSubnet
+
+$subnet11 = @{
+name = 'SharedServicesSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.10.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet11
+
+$virtualnetwork | set-azvirtualnetwork
+
+
+
+
+# Criar duas subnets de uma única vez #
+
+$subnet12 = @{
+name = 'DatabaseSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.20.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet12
+
+
+$subnet13 = @{
+name = 'PublicWebServiceSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.30.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet13
+
+
+$virtualnetwork | set-azvirtualnetwork
+
+$subnet14 = @{
+name = 'gatewaysubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.0.0/27'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
+
+
+
+
+
+##################################
