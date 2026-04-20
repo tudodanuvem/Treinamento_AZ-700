@@ -67,6 +67,9 @@ addressprefix = '10.120.0.0/27'
 $subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
 
 
+$virtualnetwork | set-azvirtualnetwork
+
+
 
 
 
