@@ -1,0 +1,61 @@
+# Criar o resource group #
+
+$rgname = @{
+name = 'ContosoResourceGroup'
+location = 'eastus'
+}
+new-azresourcegroup @rgname
+
+$rgname = 'ContosoResourceGroup'
+
+
+
+## Criar a Vnet do East Us ##
+
+$vnet1 = @{
+name = 'CoreServicesVnet'
+ResourceGroupName = $rgname
+location = 'eastus'
+addressPrefix = '10.20.0.0/16'
+}
+$virtualnetwork = new-azvirtualnetwork @vnet1
+
+
+# Criar as Subnets
+
+$subnet11 = @{
+name = 'SharedServicesSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.10.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet11
+
+$subnet12 = @{
+name = 'DatabaseSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.20.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet12
+
+$subnet13 = @{
+name = 'PublicWebServiceSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.30.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet13
+
+$subnet14 = @{
+name = 'GatewaySubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.0.0/27'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
+
+$virtualnetwork | set-azvirtualnetwork
+
+
+New-AzPrivateDnsZone -ResourceGroupName $rgname -Name "tudodanuvem.com"
+
+$vnetid = (get-AzVirtualNetwork -Name "coreservicesvnet" -ResourceGroupName $rgname).id
+
+New-AzPrivateDnsVirtualNetworkLink -ResourceGroupName $rgname -ZoneName "tudodanuvem.com" -Name dnscoreservicesvnet -RemoteVirtualNetworkId $vnetid -enableregistration
