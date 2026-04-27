@@ -1,0 +1,98 @@
+# Criar o resource group #
+
+$VMsoutheastasia = @{
+name = 'VM-SoutheastAsia'
+location = 'southeastasia'
+}
+new-azresourcegroup @VMSoutheastasia
+
+
+
+
+$VMEastus = @{
+name = 'VM-Eastus'
+location = 'eastus'
+}
+new-azresourcegroup @VMEastus
+
+
+
+$rgname = @{
+name = 'ContosoResourceGroup'
+location = 'eastus'
+}
+new-azresourcegroup @rgname
+
+$rgname = 'ContosoResourceGroup'
+
+
+
+## Criar a Vnet do East Us ##
+
+$vnet1 = @{
+name = 'CoreServicesVnet'
+ResourceGroupName = $rgname
+location = 'eastus'
+addressPrefix = '10.20.0.0/16'
+}
+$virtualnetwork = new-azvirtualnetwork @vnet1
+
+
+# Criar as Subnets
+
+$subnet11 = @{
+name = 'SharedServicesSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.10.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet11
+
+$subnet12 = @{
+name = 'DatabaseSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.20.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet12
+
+$subnet13 = @{
+name = 'PublicWebServiceSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.30.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet13
+
+$subnet14 = @{
+name = 'GatewaySubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.0.0/27'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
+
+$virtualnetwork | set-azvirtualnetwork
+
+
+# Criar a Vnet da Ásia #
+
+$vnet2 = @{
+name = 'ResearchSystemSubnetCS'
+ResourceGroupName = $rgname
+location = 'southeastasia'
+addressPrefix = '10.40.0.0/16'
+}
+$virtualnetwork2 = new-azvirtualnetwork @vnet2
+
+
+
+
+# Criar a subnet da Ásia #
+
+$subnet21 = @{
+name = 'ResearchSysemSubnetCS'
+virtualnetwork = $virtualnetwork2
+addressprefix = '10.40.0.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet21
+
+
+$virtualnetwork2 | set-azvirtualnetwork
+
