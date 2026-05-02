@@ -1,0 +1,98 @@
+# Criar o resource group #
+
+$RGEastus = @{
+name = 'RGEastUs'
+location = 'EastUS'
+}
+new-azresourcegroup @RGEastus
+
+
+
+$RGWestEurope = @{
+name = 'RGWestEurope'
+location = 'WestEurope'
+}
+new-azresourcegroup @RGWestEurope
+
+
+$RGEastus = 'RGEastus'
+$RGWestEurope = 'RGWestEurope'
+
+## Criar a Vnet do East Us ##
+
+$vnet1 = @{
+name = 'CoreServicesVnet'
+ResourceGroupName = $RGEastus
+location = 'eastus'
+addressPrefix = '10.20.0.0/16'
+}
+$virtualnetwork = new-azvirtualnetwork @vnet1
+
+
+# Criar as Subnets
+
+$subnet11 = @{
+name = 'SharedServicesSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.10.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet11
+
+$subnet12 = @{
+name = 'DatabaseSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.20.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet12
+
+$subnet13 = @{
+name = 'PublicWebServiceSubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.30.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet13
+
+$subnet14 = @{
+name = 'GatewaySubnet'
+virtualnetwork = $virtualnetwork
+addressprefix = '10.20.0.0/27'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet14
+
+$virtualnetwork | set-azvirtualnetwork
+
+
+# Criar a Vnet da West Europe #
+
+$vnet2 = @{
+name = 'ManufacturingVnet'
+ResourceGroupName = $RGWestEurope
+location = 'WestEurope'
+addressPrefix = '10.40.0.0/16'
+}
+$virtualnetwork2 = new-azvirtualnetwork @vnet2
+
+
+
+
+# Criar a subnet da West Europe #
+
+
+$subnet21 = @{
+name = 'GatewaySubnet'
+virtualnetwork = $virtualnetwork2
+addressprefix = '10.40.0.0/27'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet21
+
+
+
+$subnet22 = @{
+name = 'ResearchSysemSubnetCS'
+virtualnetwork = $virtualnetwork2
+addressprefix = '10.40.10.0/24'
+}
+$subnetconfig = add-azvirtualnetworksubnetconfig @subnet22
+
+
+$virtualnetwork2 | set-azvirtualnetwork
