@@ -1,7 +1,7 @@
 # Criar o resource group #
 
 $RGEastus = @{
-name = 'RGEastUs'
+name = 'RGEastUS'
 location = 'EastUS'
 }
 new-azresourcegroup @RGEastus
@@ -88,7 +88,7 @@ $subnetconfig = add-azvirtualnetworksubnetconfig @subnet21
 
 
 $subnet22 = @{
-name = 'ResearchSysemSubnetCS'
+name = 'ResearchSysemSubnet'
 virtualnetwork = $virtualnetwork2
 addressprefix = '10.40.10.0/24'
 }
@@ -96,3 +96,35 @@ $subnetconfig = add-azvirtualnetworksubnetconfig @subnet22
 
 
 $virtualnetwork2 | set-azvirtualnetwork
+
+
+
+
+$vmeastus = @{
+ResourceGroupName = 'RGEastUs'
+name = 'VMEastUS'
+location = 'eastus'
+Image = 'MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition:latest' 
+VirtualNetworkName = 'CoreServicesVnet'
+SubnetName = 'DatabaseSubnet' 
+SecurityGroupName = 'NSG-VMEastUS' 
+PublicIpAddressName = 'VMEastUS-Pip' 
+OpenPorts = 80,3389
+}
+
+New-azvm @vmeastus
+
+
+
+$WestEurope = @{
+ResourceGroupName = 'RGWestEurope'
+name = 'VMWestEurope'
+location = 'WestEurope'
+Image = 'MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition:latest'
+VirtualNetworkName = 'ManufacturingVnet'
+SubnetName = 'ResearchSysemSubnet' 
+SecurityGroupName = 'NSG-VMWestEurope'
+OpenPorts = 80,3389
+}
+
+New-azvm @WestEurope
