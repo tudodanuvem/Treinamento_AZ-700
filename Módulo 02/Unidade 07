@@ -1,29 +1,20 @@
-# Criar o resource group #
-
-$rg = @{
-name = 'az-700'
+$rg1 = @{
+name = 'RG-EastUS'
 location = 'eastus'
 }
-new-azresourcegroup @rg
+new-azresourcegroup @rg1
 
-$rg = 'az-700'
-
-
-
-
+$rg1 = 'RG-EastUS'
 
 ## Criar a Vnet do East Us ##
 
 $vnet1 = @{
 name = 'CoreServicesVnet'
-ResourceGroupName = $rg
+ResourceGroupName = $rg1
 location = 'eastus'
 addressPrefix = '10.20.0.0/16'
 }
 $virtualnetwork = new-azvirtualnetwork @vnet1
-
-
-
 
 # Criar as Subnets da CoreServicesVnet 
 
@@ -66,20 +57,24 @@ $virtualnetwork | set-azvirtualnetwork
 
 
 
+$rg2 = @{
+name = 'RG-Southeast-Asia'
+location = 'SoutheastAsia'
+}
+new-azresourcegroup @rg2
+
+$rg2 = 'RG-Southeast-Asia'
 
 
 # Criar a Vnet da Ásia #
 
 $vnet2 = @{
 name = 'ResearchSystemSubnet'
-ResourceGroupName = $rg
+ResourceGroupName = $rg2
 location = 'southeastasia'
 addressPrefix = '10.40.0.0/16'
 }
 $virtualnetwork2 = new-azvirtualnetwork @vnet2
-
-
-
 
 # Criar a subnet da Ásia #
 
@@ -94,28 +89,27 @@ $subnetconfig = add-azvirtualnetworksubnetconfig @subnet21
 $virtualnetwork2 | set-azvirtualnetwork
 
 
-
-
-
 ##################################
 
 
+$rg3 = @{
+name = 'RG-WestEurope'
+location = 'WestEurope'
+}
+new-azresourcegroup @rg3
 
+$rg3 = 'RG-WestEurope'
 
 
 # Criar a Vnet da Europa #
 
 $vnet3 = @{
 name = 'ManufacturingVnet'
-ResourceGroupName = $rg
+ResourceGroupName = $rg3
 location = 'westeurope'
 addressPrefix = '10.30.0.0/16'
 }
 $virtualnetwork3 = new-azvirtualnetwork @vnet3
-
-
-
-
 
 # Criar a subnet da Europa #
 
@@ -153,14 +147,49 @@ $subnetconfig = add-azvirtualnetworksubnetconfig @subnet31
 $virtualnetwork3 | set-azvirtualnetwork
 
 
+################### Criação das VMS ###################
+
+$vmeastus = @{
+ResourceGroupName = 'RG-EastUS'
+name = 'VMEastUS'
+location = 'eastus'
+Image = 'Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest' 
+PublicIpAddressName = 'vmeastus-pip'
+VirtualNetworkName = 'CoreServicesVnet'
+SubnetName = 'DatabaseSubnet' 
+SecurityGroupName = 'NSG-VMEastUS' 
+OpenPorts = 22
+}
+
+New-azvm @vmeastus
 
 
+$vmWestEurope = @{
+ResourceGroupName = 'RG-WestEurope'
+name = 'VMWestEurope'
+location = 'WestEurope'
+Image = 'Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest' 
+PublicIpAddressName = 'vmWestEurope-pip'
+VirtualNetworkName = 'ManufacturingVnet'
+SubnetName = 'ManufacturingSystemSubnet' 
+SecurityGroupName = 'NSG-VMWestEurope' 
+OpenPorts = 22
+}
 
-# Este comando apaga todos os recursos e grupos de recursos criados na conta #
-####################### Cuidado!!! #######################
-####################### Cuidado!!! #######################
-####################### Cuidado!!! #######################
-####################### Cuidado!!! #######################
-####################### Cuidado!!! #######################
+New-azvm @vmWestEurope
 
-get-azresourcegroup | remove-azresourcegroup -force
+
+$vmSoutheastAsia = @{
+ResourceGroupName = 'RG-SoutheastAsia'
+name = 'VMSoutheastAsia'
+location = 'SoutheastAsia'
+Image = 'Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest' 
+PublicIpAddressName = 'vmSoutheastAsia-pip'
+VirtualNetworkName = 'ResearchSystemSubnet'
+SubnetName = 'ResearchSysemSubnet' 
+SecurityGroupName = 'NSG-SoutheastAsia' 
+OpenPorts = 22
+}
+
+New-azvm @vmSoutheastAsia
+
