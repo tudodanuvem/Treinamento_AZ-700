@@ -58,12 +58,12 @@ $virtualnetwork | set-azvirtualnetwork
 
 
 $rg2 = @{
-name = 'RG-Southeast-Asia'
+name = 'RG-SoutheastAsia'
 location = 'SoutheastAsia'
 }
 new-azresourcegroup @rg2
 
-$rg2 = 'RG-Southeast-Asia'
+$rg2 = 'RG-SoutheastAsia'
 
 
 # Criar a Vnet da Ásia #
